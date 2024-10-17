@@ -50,12 +50,21 @@ pipeline {
             }
         }
         
+        stage('Java DB install') {
+            steps {
+                script {
+                    bat '''
+                       docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v C:/ProgramData/Jenkins/.jenkins/workspace/java-sonar:/root/.cache/ -v C:/ProgramData/Jenkins/.jenkins/workspace/java-sonar/trivy:/root/.trivy aquasec/trivy image --scanners vuln ${DOCKER_IMAGE}:${env.BUILD_NUMBER}
+                    '''
+                }
+            }
+        }
 
         stage('Trivy Scan') {
             steps {
                 script {
                     bat '''
-                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v C:/ProgramData/Jenkins/.jenkins/workspace/java-sonar:/root/.cache/ -v C:/ProgramData/Jenkins/.jenkins/workspace/java-sonar/trivy/db:/root/.trivy aquasec/trivy image --skip-db-update --scanners vuln --format json -o C:/ProgramData/Jenkins/.jenkins/workspace/java-sonar/trivy-report.json %DOCKER_IMAGE%:%BUILD_NUMBER%
+                        docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v C:/ProgramData/Jenkins/.jenkins/workspace/java-sonar:/root/.cache/ -v C:/ProgramData/Jenkins/.jenkins/workspace/java-sonar/trivy:/root/.trivy aquasec/trivy image --skip-db-update --scanners vuln --format json -o C:/ProgramData/Jenkins/.jenkins/workspace/java-sonar/trivy-report.json %DOCKER_IMAGE%:%BUILD_NUMBER%
                     '''
                 }
             }
