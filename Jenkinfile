@@ -49,6 +49,16 @@ pipeline {
                 }
             }
         }
+        stage('Download Java DB') {
+            steps {
+                script {
+                    bat '''
+                        docker run --rm -v C:/ProgramData/Jenkins/.jenkins/workspace/trivy-db:/root/.trivy aquasec/trivy --download-java-db-only
+                    '''
+                }
+            }
+        }
+
 
         stage('Trivy Scan') {
             steps {
